@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medit Vision AI - Medical Diagnosis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2a5bd7;
+      --secondary-color: #4a90e2;
+      --accent-color: #00c6ab;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .diagnosis-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .card-header h2 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    
+    .logo i {
+      font-size: 2rem;
+      margin-right: 0.8rem;
+      color: var(--accent-color);
+    }
+    
+    .logo-text {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    
+    .card-body {
+      padding: 2rem;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    }
+    
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(42, 91, 215, 0.2);
+    }
+    
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    
+    .result-container {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      background-color: #f8f9fa;
+      border-left: 4px solid var(--primary-color);
+      display: none;
+    }
+    
+    .result-container.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .result-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+    
+    .result-value {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+    
+    .positive {
+      color: var(--danger-color);
+    }
+    
+    .negative {
+      color: var(--success-color);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #777;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="diagnosis-card">
+      <div class="card-header">
+        <div class="logo">
+          <i class="fas fa-heartbeat"></i>
+          <span class="logo-text">Medit Vision AI</span>
+        </div>
+        <h2>Medical Diagnosis System</h2>
+        <p>Advanced AI-powered health assessment</p>
+      </div>
+      
+      <div class="card-body">
+        <form id="diagnosisForm" action="/predict" method="post">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="Gender">Gender</label>
+              <select id="Gender" name="Gender" required>
+                <option value="">Select Gender</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="Age">Age (years)</label>
+              <input type="number" id="Age" name="Age" min="1" max="120" step="1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="Pregnancies">Pregnancies (if applicable)</label>
+              <input type="number" id="Pregnancies" name="Pregnancies" min="0" step="1">
+            </div>
+            
+            <div class="form-group">
+              <label for="Weight">Weight (kg)</label>
+              <input type="number" id="Weight" name="Weight" min="20" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="Glucose">Glucose Level (mg/dL)</label>
+              <input type="number" id="Glucose" name="Glucose" min="20" max="500" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="BloodPressure">Blood Pressure (mmHg)</label>
+              <input type="number" id="BloodPressure" name="BloodPressure" min="40" max="200" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="SkinThickness">Skin Thickness (mm)</label>
+              <input type="number" id="SkinThickness" name="SkinThickness" min="0" step="0.1">
+            </div>
+            
+            <div class="form-group">
+              <label for="Insulin">Insulin Level (μU/mL)</label>
+              <input type="number" id="Insulin" name="Insulin" min="0" step="0.1">
+            </div>
+            
+            <div class="form-group">
+              <label for="BMI">Body Mass Index (BMI)</label>
+              <input type="number" id="BMI" name="BMI" min="10" max="60" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function</label>
+              <input type="number" id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" min="0" step="0.001">
+            </div>
+            
+            <div class="form-group">
+              <label for="HeartRate">Heart Rate (bpm)</label>
+              <input type="number" id="HeartRate" name="HeartRate" min="30" max="200" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="BodyTemperature">Body Temperature (°C)</label>
+              <input type="number" id="BodyTemperature" name="BodyTemperature" min="34" max="42" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="OxygenSaturation">Oxygen Saturation (%)</label>
+              <input type="number" id="OxygenSaturation" name="OxygenSaturation" min="70" max="100" step="0.1" required>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-block">
+            <i class="fas fa-diagnoses"></i> Analyze with Medit Vision AI
+          </button>
+        </form>
+        
+        <div id="resultContainer" class="result-container {% if result %}show{% endif %}">
+          <h3 class="result-title">Diagnosis Result</h3>
+          <p class="result-value {% if result == 'Positive' %}positive{% else %}negative{% endif %}">
+            {% if result %}
+              {{ result }}
+            {% else %}
+              Submit form to get diagnosis
+            {% endif %}
+          </p>
+          {% if result %}
+            <p class="result-details" style="margin-top: 0.5rem;">
+              <i class="fas fa-info-circle"></i> 
+              {% if result == 'Positive' %}
+                Our AI analysis suggests a positive diagnosis. Please consult with a healthcare professional for further evaluation.
+              {% else %}
+                Our AI analysis suggests a negative diagnosis. However, we recommend regular check-ups for optimal health.
+              {% endif %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>© 2023 Medit Vision AI. All rights reserved.</p>
+      <p>This AI diagnostic tool is designed to assist healthcare professionals and should not replace medical advice.</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('diagnosisForm').addEventListener('submit', function(e) {
+      // In a real application, you would handle form submission here
+      // For demo purposes, we'll just show the result container
+      document.getElementById('resultContainer').classList.add('show');
+      
+      // Prevent actual form submission for this demo
+      // e.preventDefault();
+    });
+    
+    // Set focus to first field on page load
+    document.getElementById('Gender').focus();
+  </script>
+</body>
+</html>
